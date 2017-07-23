@@ -1,0 +1,4 @@
+FROM microsoft/windowsservercore
+RUN install-packageprovider -name chocolatey -Force; \
+	Set-PackageSource -Trusted -Name "chocolatey"
+RUN install-package -Force -Name "python2,git,7zip,vswhere"
