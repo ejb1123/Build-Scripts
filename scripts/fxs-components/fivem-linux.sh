@@ -2,6 +2,8 @@
 curl -O -L https://github.com/grammarly/rocker/releases/download/1.3.0/rocker_linux_amd64.tar.gz
 tar xvf rocker_linux_amd64.tar.gz
 cd code/
+echo '#pragma once' > shared/cfx_version.h 
+echo '#define GIT_DESCRIPTION "'master' v1.0.0.'$(git describe)' linux"' >> shared/cfx_version.h 
 dir=$(pwd)
 set -e
 
