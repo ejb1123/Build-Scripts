@@ -1,9 +1,7 @@
-﻿git clone https://github.com/citizenfx/fivem.git
-git submodule update --init
-curl -O -L https://github.com/grammarly/rocker/releases/download/1.3.0/rocker_linux_amd64.tar.gz
+﻿curl -O -L https://github.com/grammarly/rocker/releases/download/1.3.0/rocker_linux_amd64.tar.gz
 tar xvf rocker_linux_amd64.tar.gz
 cd code/
-$dir=$(pwd)
+dir=$(pwd)
 set -e
 
 # add testing repository
