@@ -1,4 +1,5 @@
-﻿curl -O -L https://github.com/grammarly/rocker/releases/download/1.3.0/rocker_linux_amd64.tar.gz
+﻿#!/bin/sh
+curl -O -L https://github.com/grammarly/rocker/releases/download/1.3.0/rocker_linux_amd64.tar.gz
 tar xvf rocker_linux_amd64.tar.gz
 cd code/
 dir=$(pwd)
@@ -87,7 +88,7 @@ done
 strip --strip-unneeded /opt/cfx-server/*.so
 strip --strip-unneeded /opt/cfx-server/FXServer
 
-cd /src/ext/natives
+cd $dir/../ext/natives
 gcc -O2 -shared -fpic -o cfx.so -I/usr/include/lua5.3/ lua_cfx.c
 
 lua5.3 codegen.lua > /opt/cfx-server/citizen/scripting/lua/natives_server.lua
