@@ -55,7 +55,7 @@ function DownloadPremake5() {
     Write-Output "Time taken: $((Get-Date).Subtract($start_time).TotalSeconds) second(s)"
 }
 function CheckBoost () {
-    if ($(Test-Path -Path .\libs\Boost) -and $($(Get-ChildItem .\libs\Boost | Measure-Object ).Count -gt 0)) {
+    if ($(Test-Path -Path .\libs\boost_1_64_0) -and $($(Get-ChildItem .\libs\boost_1_64_0 | Measure-Object ).Count -gt 0)) {
         return $true
     }
     else {
