@@ -183,7 +183,7 @@ if (!$DontBuild)
     }
 
     Write-Host "[building]" -ForegroundColor DarkMagenta
-    if(false){
+    if($false){
 	    if (!($env:APPVEYOR)) {
 	        Push-Location $WorkDir\..\
 
