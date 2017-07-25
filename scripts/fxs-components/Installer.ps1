@@ -68,8 +68,8 @@ function DownloadBoost () {
     $output = ".\boost_1_64_0.zip"
     if (!(Test-Path -Path "boost_1_64_0.zip")) {
         $start_time = Get-Date 
-        Start-BitsTransfer -Source "https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.zip" -Destination "boost_1_64_0.zip"
-        # Invoke-WebRequest -Uri $url -OutFile $output -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::Chrome
+        #Start-BitsTransfer -Source "https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.zip" -Destination "boost_1_64_0.zip"
+        Invoke-WebRequest -Uri $url -OutFile $output -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::Chrome
         Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
     }
 }
