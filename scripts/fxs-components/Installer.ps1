@@ -66,12 +66,12 @@ function CheckBoost () {
 }
 function DownloadBoost () {
     Remove-Item -Path ".\boost_1_64_0.zip" -Force -Recurse -ErrorAction SilentlyContinue
-    $url = "https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.zip"
+    $url = "https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.7z"
     $output = ".\boost_1_64_0.zip"
     if (!(Test-Path -Path "boost_1_64_0.zip")) {
         $start_time = Get-Date 
-        #Start-BitsTransfer -Source "https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.zip" -Destination "boost_1_64_0.zip"
-        Invoke-WebRequest -Uri $url -OutFile $output -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::Chrome
+        $wc = New-Object System.Net.WebClient
+        $wc.DownloadFile($url, $output)
         Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
     }
 }
