@@ -51,7 +51,9 @@ function DownloadPremake5() {
     $url = "https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-windows.zip"
     $output = "$env:TEMP\premake-5.0.0-alpha11-windows.zip"
     $start_time = Get-Date
-    Invoke-WebRequest -Uri $url -OutFile $output
+    #Invoke-WebRequest -Uri $url -OutFile $output
+    $wc = New-Object System.Net.WebClient
+    $wc.DownloadFile($url, $output)
     Write-Output "Time taken: $((Get-Date).Subtract($start_time).TotalSeconds) second(s)"
 }
 function CheckBoost () {
