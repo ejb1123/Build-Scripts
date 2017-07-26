@@ -65,13 +65,13 @@ function CheckBoost () {
     }
 }
 function DownloadBoost () {
-    $output = ".\boost_1_64_0.7z"
+    $output = "boost_1_64_0.7z"
     $url = "https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.7z"
     Remove-Item -Path $output -Force -Recurse -ErrorAction SilentlyContinue
-    if (!(Test-Path -Path "$output")) {
+    if (!(Test-Path -Path .\"$output")) {
         $start_time = Get-Date 
         $wc = New-Object System.Net.WebClient
-        $wc.DownloadFile($url, $output)
+        $wc.DownloadFile($url, .\$output)
         Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
     }
 }
