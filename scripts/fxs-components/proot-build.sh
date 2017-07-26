@@ -22,7 +22,7 @@ cd fivem
 # extract the alpine root FS
 mkdir alpine
 cd alpine
-tar xf ../alpine-minirootfs-3.6.1-x86_64.tar.gz
+tar xf ../../alpine-minirootfs-3.6.1-x86_64.tar.gz
 cd ..
 
 echo '#pragma once' > code/shared/cfx_version.h
