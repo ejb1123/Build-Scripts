@@ -12,7 +12,7 @@ chmod +x proot-x86_64
 
 
 # clone fivem-private
-git clone https://github.com/citizenfx/fivem.git
+#git clone https://github.com/citizenfx/fivem.git
 
 #echo "private_repo '../../fivem-private/'" > fivem/code/privates_config.lua
 
