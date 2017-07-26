@@ -241,7 +241,7 @@ $GameVersion = ((git rev-list HEAD | measure-object).Count * 10) + 1100000
 $LauncherVersion = $GameVersion
 
 if (!$DontBuild -and $IsServer) {
-    Remove-Item -Recurse -Force $WorkDir\out
+    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $WorkDir\out
 
     New-Item -ItemType Directory -Force $WorkDir\out | Out-Null
     New-Item -ItemType Directory -Force $WorkDir\out\server | Out-Null
