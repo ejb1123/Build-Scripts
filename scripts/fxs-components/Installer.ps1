@@ -65,10 +65,10 @@ function CheckBoost () {
     }
 }
 function DownloadBoost () {
-    Remove-Item -Path ".\boost_1_64_0.zip" -Force -Recurse -ErrorAction SilentlyContinue
+    $output = ".\boost_1_64_0.7z"
     $url = "https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.7z"
-    $output = ".\boost_1_64_0.zip"
-    if (!(Test-Path -Path "boost_1_64_0.zip")) {
+    Remove-Item -Path $output -Force -Recurse -ErrorAction SilentlyContinue
+    if (!(Test-Path -Path "$output")) {
         $start_time = Get-Date 
         $wc = New-Object System.Net.WebClient
         $wc.DownloadFile($url, $output)
@@ -77,7 +77,7 @@ function DownloadBoost () {
 }
 function InstallBoost () {
     Remove-Item -Path ".\libs\boost_1_64_0" -Recurse -Force -ErrorAction SilentlyContinue
-    & "C:\Program Files\7-Zip\7z.exe" x "boost_1_64_0.zip" -olibs
+    & "C:\Program Files\7-Zip\7z.exe" x "boost_1_64_0.7z" -olibs
 }
 
 If (-Not $(Test-Path -Path .\libs)) {
