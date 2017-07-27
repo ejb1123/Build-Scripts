@@ -98,10 +98,10 @@ $env:TargetPlatformVersion = "10.0.15063.0"
 
 Add-Type -A 'System.IO.Compression.FileSystem'
 
-New-Item -ItemType Directory -Force $SaveDir | Out-Null
-New-Item -ItemType Directory -Force $WorkDir | Out-Null
-New-Item -ItemType Directory -Force $BinRoot | Out-Null
-New-Item -ItemType Directory -Force $BuildRoot | Out-Null
+New-Item -ItemType Directory $SaveDir -ErrorAction SilentlyContinue | Out-Null
+New-Item -ItemType Directory $WorkDir -ErrorAction SilentlyContinue | Out-Null
+New-Item -ItemType Directory $BinRoot -ErrorAction SilentlyContinue | Out-Null
+New-Item -ItemType Directory $BuildRoot -ErrorAction SilentlyContinue | Out-Null
 
 Set-Location $WorkRootDir
 
