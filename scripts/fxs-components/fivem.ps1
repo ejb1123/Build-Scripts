@@ -224,7 +224,7 @@ if (!$DontBuild)
     "#pragma once
     #define GIT_DESCRIPTION ""$UploadBranch $GlobalTag win32""" | Out-File -Force shared\cfx_version.h
 
-    remove-item env:\platform
+   # remove-item env:\platform
 
     #echo $env:Path
     #/logger:C:\f\customlogger.dll /noconsolelogger
