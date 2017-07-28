@@ -17,54 +17,28 @@ param (
     $DontBuild = $false
 )
 
-$CefName = "cef_binary_3.3071.1610.g5a5b538_windows64_minimal"
-
 # from http://stackoverflow.com/questions/2124753/how-i-can-use-powershell-with-the-visual-studio-command-prompt
-function Invoke-BatchFile
-{
-   param([string]$Path)
+function Invoke-BatchFile {
+    param([string]$Path)
 
-   $tempFile = [IO.Path]::GetTempFileName()
+    $tempFile = [IO.Path]::GetTempFileName()
 
-   ## Store the output of cmd.exe.  We also ask cmd.exe to output
-   ## the environment table after the batch file completesecho
-   cmd.exe /c " `"$Path`" && set > `"$tempFile`" "
+    ## Store the output of cmd.exe.  We also ask cmd.exe to output
+    ## the environment table after the batch file completesecho
+    cmd.exe /c " `"$Path`" && set > `"$tempFile`" "
 
-   ## Go through the environment variables in the temp file.
-   ## For each of them, set the variable in our local environment.
-   Get-Content $tempFile | Foreach-Object {
-       if ($_ -match "^(.*?)=(.*)$")
-       {
-           Set-Content "env:\$($matches[1])" $matches[2]
-       }
-   }
-
-   Remove-Item $tempFile
-}
-
-function Invoke-WebHook
-{
-    param([string]$Text)
-
-    $payload = @{
-	    "text" = $Text;
+    ## Go through the environment variables in the temp file.
+    ## For each of them, set the variable in our local environment.
+    Get-Content $tempFile | Foreach-Object {
+        if ($_ -match "^(.*?)=(.*)$") {
+            Set-Content "env:\$($matches[1])" $matches[2]
+        }
     }
 
-    if (!$env:TG_WEBHOOK)
-    {
-        return
-    }
-
-    iwr -UseBasicParsing -Uri $env:TG_WEBHOOK -Method POST -Body (ConvertTo-Json -Compress -InputObject $payload) | out-null
-
-    $payload.text += " <:mascot:295575900446130176>"#<@&297070674898321408>"
-
-    iwr -UseBasicParsing -Uri $env:DISCORD_WEBHOOK -Method POST -Body (ConvertTo-Json -Compress -InputObject $payload) | out-null
+    Remove-Item $tempFile
 }
 
-$inCI = $false
-$Triggerer = "$env:USERDOMAIN\$env:USERNAME"
-$UploadBranch = "canary"
+
 $IsServer = $false
 $UploadType = "client"
 
@@ -73,26 +47,17 @@ if ($env:IS_FXSERVER -eq 1) {
     $UploadType = "server"
 }
 
-if ($env:CI) {
-    $inCI = $true
+$Branch = "master"
+$WorkDir = $WorkDir -replace '/', '\'
 
-    
-    	$Branch = "master"
-    	$WorkDir = $WorkDir -replace '/','\'
-
-    	$Triggerer = $env:GITLAB_USER_EMAIL
-
-    	$UploadBranch = $env:CI_BUILD_REF_NAME
-
-    if ($IsServer) {
-        $UploadBranch += " SERVER"
-    }
+if ($IsServer) {
+    $UploadBranch += " SERVER"
 }
 
 $WorkRootDir = "$WorkDir\code\"
 
-$BinRoot = "$SaveDir\bin\$UploadType\$Branch\" -replace '/','\'
-$BuildRoot = "$SaveDir\build\$UploadType\$Branch\" -replace '/', '\'
+$BinRoot = "$SaveDir\bin\$UploadType\" -replace '/', '\'
+$BuildRoot = "$SaveDir\build\$UploadType\" -replace '/', '\'
 
 $env:TargetPlatformVersion = "10.0.15063.0"
 
@@ -105,29 +70,24 @@ New-Item -ItemType Directory $BuildRoot -ErrorAction SilentlyContinue | Out-Null
 
 Set-Location $WorkRootDir
 
-$GlobalTag=git describe
+$GlobalTag = git describe
 
 if ((Get-Command "python.exe" -ErrorAction SilentlyContinue) -eq $null) {
     $env:Path = "C:\python27\;" + $env:Path
 }
 
 if (!($env:BOOST_ROOT)) {
-	if (Test-Path C:\Libraries\boost_1_64_0) {
-		$env:BOOST_ROOT = "C:\Libraries\boost_1_64_0"
-	} else {
-    	$env:BOOST_ROOT = "C:\dev\boost_1_60_0"
+    if (Test-Path C:\Libraries\boost_1_64_0) {
+        $env:BOOST_ROOT = "C:\Libraries\boost_1_64_0"
+    }
+    else {
+        $env:BOOST_ROOT = "C:\dev\boost_1_60_0"
     }
 }
 
-if (!$DontBuild)
-{
-    #Invoke-WebHook "Bloop, building a new $env:CI_PROJECT_NAME $UploadBranch build, triggered by $Triggerer"
+if (!$DontBuild) {
 
     Write-Host "[checking if repository is latest version]" -ForegroundColor DarkMagenta
-
-    #$ci_dir = $env:CI_PROJECT_DIR -replace '/','\'
-
-    #cmd /c mklink /d citizenmp cfx-client
 
     $VCDir = (Get-ItemProperty HKLM:\SOFTWARE\WOW6432Node\Microsoft\VisualStudio\SxS\VS7)."15.0"
 
@@ -150,11 +110,12 @@ if (!$DontBuild)
         $SubmodulePath = git config -f .gitmodules --get "submodule.$($submodule.Name).path"
         $SubmoduleRemote = git config -f .gitmodules --get "submodule.$($submodule.Name).url"
 
-        $Tag = (git ls-remote --tags $SubmoduleRemote | Select-String -Pattern $submodule.Hash) -replace '^.*tags/([^^]+).*$','$1'
+        $Tag = (git ls-remote --tags $SubmoduleRemote | Select-String -Pattern $submodule.Hash) -replace '^.*tags/([^^]+).*$', '$1'
 
         if (!$Tag) {
             git clone $SubmoduleRemote $SubmodulePath
-        } else {
+        }
+        else {
             git clone -b $Tag --depth 1 --single-branch $SubmoduleRemote $SubmodulePath
         }
     }
@@ -168,43 +129,8 @@ if (!$DontBuild)
     .\prebuild.cmd
     Pop-Location
 
-    if (!$IsServer) {
-        Write-Host "[downloading chrome]" -ForegroundColor DarkMagenta
-        try {
-            if (!(Test-Path "$SaveDir\$CefName.zip")) {
-                Invoke-WebRequest -UseBasicParsing -OutFile "$SaveDir\$CefName.zip" "https://runtime.fivem.net/build/cef/$CefName.zip"
-            }
-
-            Expand-Archive -Force -Path "$SaveDir\$CefName.zip" -DestinationPath $WorkDir\vendor\cef
-            Move-Item -Force $WorkDir\vendor\cef\$CefName\* $WorkDir\vendor\cef\
-        } catch {
-            return
-        }
-    }
-
     Write-Host "[building]" -ForegroundColor DarkMagenta
-    if($false){
-	    if (!($env:APPVEYOR)) {
-	        Push-Location $WorkDir\..\
-
-	        # cloned, building
-	        if (!(Test-Path fivem-private)) {
-	            git clone $env:FIVEM_PRIVATE_URI
-	        } else {
-	            cd fivem-private
-
-	            git fetch origin | Out-Null
-	            git reset --hard origin/master | Out-Null
-
-	            cd ..
-	        }
-
-	        echo "private_repo '../../fivem-private/'" | Out-File -Encoding ascii $WorkRootDir\privates_config.lua
-
-	        Pop-Location
-	    }
-    }
-
+    
     $GameName = "five"
     $BuildPath = "$BuildRoot\five"
 
@@ -224,7 +150,7 @@ if (!$DontBuild)
     "#pragma once
     #define GIT_DESCRIPTION ""$UploadBranch $GlobalTag win32""" | Out-File -Force shared\cfx_version.h
 
-   # remove-item env:\platform
+    # remove-item env:\platform
 
     #echo $env:Path
     #/logger:C:\f\customlogger.dll /noconsolelogger
@@ -280,7 +206,7 @@ if (!$DontBuild -and !$IsServer) {
     Copy-Item -Force -Recurse $BinRoot\five\release\citizen\* $WorkDir\caches\fivereborn\citizen\
 
     if (Test-Path C:\f\tdd2) {
-    	Copy-Item -Force -Recurse C:\f\tdd2\citizen\ui.rpf $WorkDir\caches\fivereborn\citizen\
+        Copy-Item -Force -Recurse C:\f\tdd2\citizen\ui.rpf $WorkDir\caches\fivereborn\citizen\
     }
 
     Copy-Item -Force -Recurse $WorkDir\vendor\cef\Release\*.dll $WorkDir\caches\fivereborn\bin\
