@@ -3,7 +3,7 @@
 [string]$WorkDir = "C:\fivem\dev\fivem"
 )
 Push-Location -Path "$SrcDir\components"
-[System.Collections.ArrayList] $col = get-content -Pathn "$WorkDir\data\server_windows\components.json" | ConvertFrom-Json
+[System.Collections.ArrayList] $col = get-content -Path "$WorkDir\data\server_windows\components.json" | ConvertFrom-Json
 $col.Remove("svadhesive")
 Get-ChildItem -Path "." | foreach {
     $fullname = $_.FullName
