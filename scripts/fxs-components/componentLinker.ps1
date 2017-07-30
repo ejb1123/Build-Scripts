@@ -26,6 +26,6 @@ Get-ChildItem -Path "." | foreach {
             }
         }
     }
-    Set-Content -Path "$WorkDir\data\server_windows\components.json" -Value $($(ConvertTo-Json($col)).Replace('[','}').Replace(']','}'))
+    Set-Content -Path "$WorkDir\data\server_windows\components.json" -Value $($(ConvertTo-Json($col)).Replace('[','{').Replace(']','}'))
     Pop-Location
 }
